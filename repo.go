@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 
 	"gopkg.in/redis.v3"
@@ -13,6 +14,8 @@ type repo interface {
 type RedisRepo struct {
 	client *redis.Client
 }
+
+var puzzlesKey string = "puzzles"
 
 func NewRedisRepo(addr string) RedisRepo {
 	fmt.Println("Connecting to redis on", addr)
@@ -31,5 +34,15 @@ func NewRedisRepo(addr string) RedisRepo {
 }
 
 func (r RedisRepo) RandomSudoku() Sudoku {
-	return Sudoku{Id: "test"}
+	var sudoku Sudoku
+	bs, err := r.client.SRandMember(puzzlesKey).Bytes()
+	if err != nil {
+		fmt.Println(err)
+		return Sudoku{Id: "error"}
+	}
+	if err = json.Unmarshal(bs, &sudoku); err != nil {
+		fmt.Println(err)
+		return Sudoku{Id: "error"}
+	}
+	return sudoku
 }
