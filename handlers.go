@@ -2,7 +2,6 @@ package main
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"io/ioutil"
 	"net/http"
@@ -38,7 +37,6 @@ func PuzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
 		}
 		return
 	}
-	fmt.Println("params:", params)
 
 	sudoku := repo.CreateSudoku(params.Puzzle, params.Solution)
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
