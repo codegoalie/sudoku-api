@@ -38,11 +38,11 @@ func (r RedisRepo) RandomSudoku() Sudoku {
 	bs, err := r.client.SRandMember(puzzlesKey).Bytes()
 	if err != nil {
 		fmt.Println(err)
-		return Sudoku{Id: "error"}
+		return Sudoku{Id: "No puzzle found error"}
 	}
 	if err = json.Unmarshal(bs, &sudoku); err != nil {
 		fmt.Println(err)
-		return Sudoku{Id: "error"}
+		return Sudoku{Id: "Puzzle unmarshal error"}
 	}
 	return sudoku
 }
