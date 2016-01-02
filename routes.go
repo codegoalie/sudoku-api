@@ -13,4 +13,5 @@ type Routes []Route
 
 var routes = Routes{
 	Route{"PuzzleShow", "GET", "/puzzle", PuzzleShow},
+	Route{"PuzzleCreate", "POST", "/puzzle", PuzzleCreate},
 }

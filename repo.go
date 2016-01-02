@@ -9,6 +9,7 @@ import (
 
 type repo interface {
 	RandomSudoku() Sudoku
+	CreateSudoku([81]int, [81]int) Sudoku
 }
 
 type RedisRepo struct {
@@ -44,5 +45,23 @@ func (r RedisRepo) RandomSudoku() Sudoku {
 		fmt.Println(err)
 		return Sudoku{Id: "Puzzle unmarshal error"}
 	}
+	return sudoku
+}
+
+func (r RedisRepo) CreateSudoku(puzzle, solution [81]int) Sudoku {
+	sudoku := NewSudoku(puzzle, solution)
+
+	b, err := json.Marshal(sudoku)
+	if err != nil {
+		fmt.Println(err)
+		return Sudoku{Name: "Cannot parse params"}
+	}
+
+	r.client.SAdd(puzzlesKey, string(b))
+	if err != nil {
+		fmt.Println(err)
+		return Sudoku{Name: "Failed to persist puzzle"}
+	}
+
 	return sudoku
 }
