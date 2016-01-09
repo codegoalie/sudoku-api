@@ -2,14 +2,16 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
 
 	"gopkg.in/redis.v3"
 )
 
 type repo interface {
-	RandomSudoku() Sudoku
-	CreateSudoku([81]int, [81]int) Sudoku
+	GetSudoku(string) (Sudoku, error)
+	RandomSudoku() (Sudoku, error)
+	CreateSudoku([81]int, [81]int) (Sudoku, error)
 }
 
 type RedisRepo struct {
@@ -17,6 +19,7 @@ type RedisRepo struct {
 }
 
 var puzzlesKey string = "puzzles"
+var listKey string = "puzzleList"
 
 func NewRedisRepo(addr string) RedisRepo {
 	fmt.Println("Connecting to redis on", addr)
@@ -34,34 +37,46 @@ func NewRedisRepo(addr string) RedisRepo {
 	return RedisRepo{client: client}
 }
 
-func (r RedisRepo) RandomSudoku() Sudoku {
-	var sudoku Sudoku
-	bs, err := r.client.SRandMember(puzzlesKey).Bytes()
+func (r RedisRepo) RandomSudoku() (Sudoku, error) {
+	id, err := r.client.SRandMember(listKey).Bytes()
 	if err != nil {
-		fmt.Println(err)
-		return Sudoku{Id: "No puzzle found error"}
+		return Sudoku{}, errors.New("No puzzles in list")
 	}
-	if err = json.Unmarshal(bs, &sudoku); err != nil {
-		fmt.Println(err)
-		return Sudoku{Id: "Puzzle unmarshal error"}
-	}
-	return sudoku
+	return r.GetSudoku(string(id))
 }
 
-func (r RedisRepo) CreateSudoku(puzzle, solution [81]int) Sudoku {
+func (r RedisRepo) GetSudoku(id string) (Sudoku, error) {
+	var sudoku Sudoku
+	bs, err := r.client.Get(puzzlesKey + id).Bytes()
+	if err != nil {
+		return Sudoku{}, errors.New("No puzzle found error")
+	}
+	if err = json.Unmarshal(bs, &sudoku); err != nil {
+		return Sudoku{}, errors.New("Puzzle unmarshal error")
+	}
+	return sudoku, nil
+}
+
+func (r RedisRepo) CreateSudoku(puzzle, solution [81]int) (Sudoku, error) {
 	sudoku := NewSudoku(puzzle, solution)
+
+	_, err := r.GetSudoku(sudoku.Id)
+	if err == nil {
+		return Sudoku{}, errors.New("Puzzle already exists")
+	}
 
 	b, err := json.Marshal(sudoku)
 	if err != nil {
 		fmt.Println(err)
-		return Sudoku{Name: "Cannot parse params"}
+		return Sudoku{}, errors.New("Cannot parse params")
 	}
 
-	r.client.SAdd(puzzlesKey, string(b))
+	r.client.SAdd(listKey, sudoku.Id)
+	r.client.Set(puzzlesKey+sudoku.Id, string(b), 0)
 	if err != nil {
 		fmt.Println(err)
-		return Sudoku{Name: "Failed to persist puzzle"}
+		return Sudoku{}, errors.New("Failed to persist puzzle")
 	}
 
-	return sudoku
+	return sudoku, nil
 }

@@ -12,6 +12,7 @@ type Route struct {
 type Routes []Route
 
 var routes = Routes{
-	Route{"PuzzleShow", "GET", "/puzzle", PuzzleShow},
+	Route{"PuzzleIndex", "GET", "/puzzle", PuzzleIndex},
+	Route{"PuzzleShow", "GET", "/puzzle/{id}", PuzzleShow},
 	Route{"PuzzleCreate", "POST", "/puzzle", PuzzleCreate},
 }
