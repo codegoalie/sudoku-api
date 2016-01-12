@@ -19,6 +19,12 @@ type ErrorBody struct {
 	Message string `json:"message"`
 }
 
+type CreateErrorBody struct {
+	Error   string `json:"error"`
+	Message string `json:"message"`
+	Id      string `json:"id"`
+}
+
 func PuzzleIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
@@ -85,9 +91,10 @@ func PuzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
 	sudoku, err := repo.CreateSudoku(params.Puzzle, params.Solution)
 	if err != nil {
 		w.WriteHeader(http.StatusConflict)
-		body := ErrorBody{
+		body := CreateErrorBody{
 			Error:   "Error creating puzzle",
 			Message: err.Error(),
+			Id:      sudoku.Id,
 		}
 		if err := json.NewEncoder(w).Encode(body); err != nil {
 			panic(err)
