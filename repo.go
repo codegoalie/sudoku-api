@@ -62,20 +62,20 @@ func (r RedisRepo) CreateSudoku(puzzle, solution [81]int) (Sudoku, error) {
 
 	_, err := r.GetSudoku(sudoku.Id)
 	if err == nil {
-		return Sudoku{}, errors.New("Puzzle already exists")
+		return sudoku, errors.New("Puzzle already exists")
 	}
 
 	b, err := json.Marshal(sudoku)
 	if err != nil {
 		fmt.Println(err)
-		return Sudoku{}, errors.New("Cannot parse params")
+		return sudoku, errors.New("Cannot parse params")
 	}
 
 	r.client.SAdd(listKey, sudoku.Id)
 	r.client.Set(puzzlesKey+sudoku.Id, string(b), 0)
 	if err != nil {
 		fmt.Println(err)
-		return Sudoku{}, errors.New("Failed to persist puzzle")
+		return sudoku, errors.New("Failed to persist puzzle")
 	}
 
 	return sudoku, nil
