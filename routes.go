@@ -15,4 +15,5 @@ var routes = Routes{
 	Route{"PuzzleIndex", "GET", "/puzzle", PuzzleIndex},
 	Route{"PuzzleShow", "GET", "/puzzle/{id}", PuzzleShow},
 	Route{"PuzzleCreate", "POST", "/puzzle", PuzzleCreate},
+	Route{"StatsIndex", "GET", "/stats", StatsIndex},
 }

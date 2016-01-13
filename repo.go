@@ -12,6 +12,7 @@ type repo interface {
 	GetSudoku(string) (Sudoku, error)
 	RandomSudoku() (Sudoku, error)
 	CreateSudoku([81]int, [81]int) (Sudoku, error)
+	GetPuzzleCount() int
 }
 
 type RedisRepo struct {
@@ -35,6 +36,10 @@ func NewRedisRepo(addr string) RedisRepo {
 	}
 
 	return RedisRepo{client: client}
+}
+
+func (r RedisRepo) GetPuzzleCount() int {
+	return int(r.client.SCard(listKey).Val())
 }
 
 func (r RedisRepo) RandomSudoku() (Sudoku, error) {
