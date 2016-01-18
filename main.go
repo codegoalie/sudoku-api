@@ -4,7 +4,22 @@ import (
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/prometheus/client_golang/prometheus"
 )
+
+var (
+	added = prometheus.NewCounter(prometheus.CounterOpts{
+		Namespace: "sudoku",
+		Subsystem: "api",
+		Name:      "puzzles_added",
+		Help:      "The number of puzzles added.",
+	})
+)
+
+func init() {
+	prometheus.MustRegister(added)
+}
 
 func main() {
 	repo := NewRedisRepo(os.Getenv("REDIS_ADDR"))

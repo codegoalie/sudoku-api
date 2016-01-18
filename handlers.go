@@ -114,7 +114,9 @@ func PuzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
 			panic(err)
 		}
 	} else {
+		added.Inc()
 		w.WriteHeader(http.StatusCreated)
+
 		if err := json.NewEncoder(w).Encode(sudoku); err != nil {
 			panic(err)
 		}
