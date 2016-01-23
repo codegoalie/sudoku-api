@@ -1,5 +1,7 @@
 # sudoku-api
 
+[ ![Codeship Status for chrismar035/sudoku-api](https://codeship.com/projects/e65c0d10-a3ba-0133-077d-1ac8bff03ae9/status?branch=master)](https://codeship.com/projects/129316)
+
 The HTTP api service for serving Sudoku puzzles
 
 `GET /puzzle`
