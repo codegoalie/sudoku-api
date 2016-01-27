@@ -1,10 +1,11 @@
 run_tests:
-  build: true
+  build: ./
+  dockerfile: Dockerfile.tests
 compile_binary:
   build: ./
   dockerfile: Dockerfile.compile
   volumes:
-    - ./bin:/bin
+    - ./bin:/go/bin
    
 build_and_push_image:
   image: codeship/google-cloud-deployment
@@ -12,6 +13,7 @@ build_and_push_image:
   dockerfile: Dockerfile.build
   add_docker: true
   volumes:
+    - ./scripts:/deploy
     - ./bin:/bin
   
 google_cloud_deployment:
@@ -19,3 +21,5 @@ google_cloud_deployment:
   image: codeship/google-cloud-deployment
   encrypted_env_file: google_deployment.env.encrypted
   add_docker: true
+  volumes:
+    - ./scripts:/deploy

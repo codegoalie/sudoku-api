@@ -1,6 +1,7 @@
 - service: run_tests
-  command: got test -v ./...
+  command: go test -v ./...
 - service: compile_binary
+  command: go install github.com/chrismar035/sudoku-api
 - service: build_and_push_image
   command: /deploy/build_and_push_image.sh
 - service: google_cloud_deployment

@@ -1,0 +1,3 @@
+FROM golang:onbuild
+
+ADD . /go/src/github.com/chrismar035/sudoku-api
