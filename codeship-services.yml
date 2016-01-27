@@ -1,7 +1,21 @@
-googleclouddeployment:
+run_tests:
+  build: true
+compile_binary:
+  build: ./
+  dockerfile: Dockerfile.compile
+  volumes:
+    - ./bin:/bin
+   
+build_and_push_image:
   image: codeship/google-cloud-deployment
   encrypted_env_file: google_deployment.env.encrypted
-  # Add Docker if you want to interact with the Google Container Engine and Google Container Registry
+  dockerfile: Dockerfile.build
   add_docker: true
   volumes:
-    - ./:/deploy
+    - ./bin:/bin
+  
+google_cloud_deployment:
+  tag: master
+  image: codeship/google-cloud-deployment
+  encrypted_env_file: google_deployment.env.encrypted
+  add_docker: true

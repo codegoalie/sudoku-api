@@ -15,6 +15,11 @@ gcloud config set compute/zone $DEFAULT_ZONE
 echo "Configure kubectl"
 gcloud container clusters get-credentials $KUBERNETES_APP_NAME
 
+echo "Building docker image"
+docker build -t chrismar035/$KUBERNETES_RC_NAME -f Dockerfile.build /build
 
-echo "Starting rolling update of $KUBERNETES_RC_NAME with image $GOOGLE_CONTAINER_NAME"
-kubectl rolling-update $KUBERNETES_RC_NAME --image=$GOOGLE_CONTAINER_NAME
+echo "Tagging the Docker machine for Google Container Registry push"
+docker tag -f chrismar035/$KUBERNETES_RC_NAME $GOOGLE_CONTAINER_NAME
+
+echo "Pushing to Google Container Registry: $GOOGLE_CONTAINER_NAME"
+gcloud docker push $GOOGLE_CONTAINER_NAME

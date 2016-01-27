@@ -1,0 +1,9 @@
+FROM scratch
+
+ADD /bin/sudoku-api /sudoku-api
+
+ENV REDIS_ADDR "redis:6379"
+
+ENTRYPOINT /sudoku-api
+
+EXPOSE 8080
