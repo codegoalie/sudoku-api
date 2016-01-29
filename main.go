@@ -25,6 +25,7 @@ var (
 
 func init() {
 	prometheus.MustRegister(added)
+	prometheus.MustRegister(duplicate)
 }
 
 func main() {
