@@ -1,0 +1,2 @@
+- service: googleclouddeployment
+  command: /deploy/deploy_to_gcp.sh
