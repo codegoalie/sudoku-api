@@ -110,6 +110,9 @@ func PuzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
 			Message: err.Error(),
 			Id:      sudoku.Id,
 		}
+		if err.Error() == "Puzzle already exists" {
+			duplicate.Inc()
+		}
 		if err := json.NewEncoder(w).Encode(body); err != nil {
 			panic(err)
 		}

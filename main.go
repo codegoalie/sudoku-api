@@ -15,6 +15,12 @@ var (
 		Name:      "puzzles_added",
 		Help:      "The number of puzzles added.",
 	})
+	duplicate = prometheus.NewCounter(prometheus.CounterOpts{
+		Namespace: "sudoku",
+		Subsystem: "api",
+		Name:      "puzzles_duplicate",
+		Help:      "The number of puzzles sent that already exist.",
+	})
 )
 
 func init() {
