@@ -32,7 +32,7 @@ type stats struct {
 func statsIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 
-	count := repo.GetPuzzleCount()
+	count := repo.getPuzzleCount()
 	w.WriteHeader(http.StatusOK)
 	if err := json.NewEncoder(w).Encode(stats{Count: count}); err != nil {
 		panic(err)
@@ -42,7 +42,7 @@ func statsIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 func puzzleIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
-	sudoku, err := repo.RandomSudoku()
+	sudoku, err := repo.randomSudoku()
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		body := errorBody{
@@ -65,7 +65,7 @@ func puzzleShow(repo repo, w http.ResponseWriter, r *http.Request) {
 	id := parts[len(parts)-1]
 	fmt.Println(id)
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	sudoku, err := repo.GetSudoku(id)
+	sudoku, err := repo.getSudoku(id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
 		body := errorBody{
@@ -102,7 +102,7 @@ func puzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
-	sudoku, err := repo.CreateSudoku(params.Puzzle, params.Solution)
+	sudoku, err := repo.createSudoku(params.Puzzle, params.Solution)
 	if err != nil {
 		w.WriteHeader(http.StatusConflict)
 		body := createErrorBody{
