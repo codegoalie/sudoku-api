@@ -9,43 +9,43 @@ import (
 	"strings"
 )
 
-type CreateParams struct {
+type createParams struct {
 	Puzzle   [81]int `json:"puzzle"`
 	Solution [81]int `json:"solution"`
 }
 
-type ErrorBody struct {
+type errorBody struct {
 	Error   string `json:"error"`
 	Message string `json:"message"`
 }
 
-type CreateErrorBody struct {
+type createErrorBody struct {
 	Error   string `json:"error"`
 	Message string `json:"message"`
-	Id      string `json:"id"`
+	ID      string `json:"id"`
 }
 
-type Stats struct {
+type stats struct {
 	Count int `json:"count"`
 }
 
-func StatsIndex(repo repo, w http.ResponseWriter, r *http.Request) {
+func statsIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 
 	count := repo.GetPuzzleCount()
 	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(Stats{Count: count}); err != nil {
+	if err := json.NewEncoder(w).Encode(stats{Count: count}); err != nil {
 		panic(err)
 	}
 }
 
-func PuzzleIndex(repo repo, w http.ResponseWriter, r *http.Request) {
+func puzzleIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json;charset=UTF-8")
 	w.WriteHeader(http.StatusOK)
 	sudoku, err := repo.RandomSudoku()
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		body := ErrorBody{
+		body := errorBody{
 			Error:   "Error fetching random puzzle",
 			Message: err.Error(),
 		}
@@ -60,7 +60,7 @@ func PuzzleIndex(repo repo, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func PuzzleShow(repo repo, w http.ResponseWriter, r *http.Request) {
+func puzzleShow(repo repo, w http.ResponseWriter, r *http.Request) {
 	parts := strings.Split(r.URL.String(), "/")
 	id := parts[len(parts)-1]
 	fmt.Println(id)
@@ -68,7 +68,7 @@ func PuzzleShow(repo repo, w http.ResponseWriter, r *http.Request) {
 	sudoku, err := repo.GetSudoku(id)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
-		body := ErrorBody{
+		body := errorBody{
 			Error:   "Error fetching puzzle",
 			Message: err.Error(),
 		}
@@ -83,8 +83,8 @@ func PuzzleShow(repo repo, w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func PuzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
-	var params CreateParams
+func puzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
+	var params createParams
 	body, err := ioutil.ReadAll(io.LimitReader(r.Body, 1048576))
 	if err != nil {
 		panic(err)
@@ -105,10 +105,10 @@ func PuzzleCreate(repo repo, w http.ResponseWriter, r *http.Request) {
 	sudoku, err := repo.CreateSudoku(params.Puzzle, params.Solution)
 	if err != nil {
 		w.WriteHeader(http.StatusConflict)
-		body := CreateErrorBody{
+		body := createErrorBody{
 			Error:   "Error creating puzzle",
 			Message: err.Error(),
-			Id:      sudoku.Id,
+			ID:      sudoku.ID,
 		}
 		if err.Error() == "Puzzle already exists" {
 			duplicate.Inc()

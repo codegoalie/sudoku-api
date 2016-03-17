@@ -7,13 +7,13 @@ import (
 	"github.com/prometheus/client_golang/prometheus"
 )
 
-func NewRouter(repo repo) *mux.Router {
+func newRouter(repo repo) *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
-	for _, route := range routes {
+	for _, route := range ourRoutes {
 		var handler http.Handler
 
 		handler = handlerWithRepo(repo, route.HandlerFunc)
-		handler = Logger(handler, route.Name)
+		handler = logger(handler, route.Name)
 
 		router.
 			Methods(route.Method).

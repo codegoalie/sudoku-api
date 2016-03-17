@@ -29,8 +29,8 @@ func init() {
 }
 
 func main() {
-	repo := NewRedisRepo(os.Getenv("REDIS_ADDR"))
-	router := NewRouter(repo)
+	repo := newRedisRepo(os.Getenv("REDIS_ADDR"))
+	router := newRouter(repo)
 
 	port := os.Getenv("PORT")
 	if port == "" {
