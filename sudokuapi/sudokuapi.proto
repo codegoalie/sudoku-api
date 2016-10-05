@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+package sudokuapi;
+
+service Puzzler {
+  rpc GetPuzzle (PuzzleID) returns (Puzzle);
+}
+
+message PuzzleID {
+  string uuid = 1;
+}
+
+message Puzzle {
+  string uuid = 1;
+  repeated uint32 cell = 2;
+}
