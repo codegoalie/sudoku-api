@@ -57,8 +57,7 @@ func main() {
 	log.Printf("Should fail:\n")
 	newPuzzle, err = client.CreatePuzzle(context.Background(), &puzzle)
 	if err != nil {
-		log.Fatalf("Count not create puzzle: %v", err)
+		log.Printf("Count not create puzzle: %v", err)
 	}
-	log.Printf("Added: %v", newPuzzle.Uuid)
 
 }
