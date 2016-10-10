@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"net"
@@ -14,48 +13,18 @@ import (
 )
 
 var (
-	port         = flag.Int("port", 10000, "The server port")
-	repoInstance = staticRepo{db: map[string][]uint32{
-		"3430eb79-7709-4957-bc63-0ceb650c4e6e": []uint32{
-			7, 5, 0, 0, 0, 0, 0, 2, 0,
-			1, 0, 0, 2, 0, 0, 0, 0, 0,
-			3, 0, 0, 0, 9, 0, 4, 0, 6,
-			0, 0, 0, 1, 7, 0, 0, 0, 0,
-			0, 0, 1, 0, 3, 0, 5, 0, 0,
-			0, 0, 0, 0, 4, 8, 0, 0, 0,
-			8, 0, 9, 0, 5, 0, 0, 0, 2,
-			0, 0, 0, 0, 0, 7, 0, 0, 3,
-			0, 6, 0, 0, 0, 0, 0, 5, 1,
-		},
-	},
-	}
+	port = flag.Int("port", 10000, "The server port")
 )
-
-type staticRepo struct {
-	db map[string][]uint32
-}
 
 type server struct{}
 
 type repo interface {
 	GetSudoku(string) ([]uint32, error)
 	GetCount() uint64
-}
-
-func (r staticRepo) GetSudoku(uuid string) ([]uint32, error) {
-	if grid, ok := r.db[uuid]; ok {
-		return grid, nil
-	}
-
-	return []uint32{}, errors.New("Unknown puzzle UUID")
-}
-
-func (r staticRepo) GetCount() uint64 {
-	return uint64(len(r.db))
+	CreatePuzzle(uuid string, grid []uint32) error
 }
 
 func (s server) GetPuzzle(ctx context.Context, params *pb.PuzzleID) (*pb.Puzzle, error) {
-	fmt.Println(params.Uuid)
 	grid, err := repoInstance.GetSudoku(params.Uuid)
 	if err != nil {
 		return nil, err
@@ -69,11 +38,8 @@ func (s server) GetStats(ctx context.Context, params *pb.StatsQuery) (*pb.Stats,
 }
 
 func (s server) CreatePuzzle(ctx context.Context, params *pb.Puzzle) (*pb.Puzzle, error) {
-	if len(repoInstance.db[params.Uuid]) > 0 {
-		return nil, errors.New("Puzzle already exists")
-	}
-	repoInstance.db[params.Uuid] = params.Cell
-	return params, nil
+	err := repoInstance.CreatePuzzle(params.Uuid, params.Cell)
+	return params, err
 }
 
 func main() {
