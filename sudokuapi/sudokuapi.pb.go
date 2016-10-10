@@ -9,8 +9,10 @@ It is generated from these files:
 	sudokuapi.proto
 
 It has these top-level messages:
+	StatsQuery
 	PuzzleID
 	Puzzle
+	Stats
 */
 package sudokuapi
 
@@ -34,6 +36,14 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.ProtoPackageIsVersion2 // please upgrade the proto package
 
+type StatsQuery struct {
+}
+
+func (m *StatsQuery) Reset()                    { *m = StatsQuery{} }
+func (m *StatsQuery) String() string            { return proto.CompactTextString(m) }
+func (*StatsQuery) ProtoMessage()               {}
+func (*StatsQuery) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+
 type PuzzleID struct {
 	Uuid string `protobuf:"bytes,1,opt,name=uuid" json:"uuid,omitempty"`
 }
@@ -41,7 +51,7 @@ type PuzzleID struct {
 func (m *PuzzleID) Reset()                    { *m = PuzzleID{} }
 func (m *PuzzleID) String() string            { return proto.CompactTextString(m) }
 func (*PuzzleID) ProtoMessage()               {}
-func (*PuzzleID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{0} }
+func (*PuzzleID) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
 
 type Puzzle struct {
 	Uuid string   `protobuf:"bytes,1,opt,name=uuid" json:"uuid,omitempty"`
@@ -51,11 +61,22 @@ type Puzzle struct {
 func (m *Puzzle) Reset()                    { *m = Puzzle{} }
 func (m *Puzzle) String() string            { return proto.CompactTextString(m) }
 func (*Puzzle) ProtoMessage()               {}
-func (*Puzzle) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{1} }
+func (*Puzzle) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{2} }
+
+type Stats struct {
+	Count uint64 `protobuf:"varint,1,opt,name=count" json:"count,omitempty"`
+}
+
+func (m *Stats) Reset()                    { *m = Stats{} }
+func (m *Stats) String() string            { return proto.CompactTextString(m) }
+func (*Stats) ProtoMessage()               {}
+func (*Stats) Descriptor() ([]byte, []int) { return fileDescriptor0, []int{3} }
 
 func init() {
+	proto.RegisterType((*StatsQuery)(nil), "sudokuapi.StatsQuery")
 	proto.RegisterType((*PuzzleID)(nil), "sudokuapi.PuzzleID")
 	proto.RegisterType((*Puzzle)(nil), "sudokuapi.Puzzle")
+	proto.RegisterType((*Stats)(nil), "sudokuapi.Stats")
 }
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -70,6 +91,7 @@ const _ = grpc.SupportPackageIsVersion3
 
 type PuzzlerClient interface {
 	GetPuzzle(ctx context.Context, in *PuzzleID, opts ...grpc.CallOption) (*Puzzle, error)
+	GetStats(ctx context.Context, in *StatsQuery, opts ...grpc.CallOption) (*Stats, error)
 }
 
 type puzzlerClient struct {
@@ -89,10 +111,20 @@ func (c *puzzlerClient) GetPuzzle(ctx context.Context, in *PuzzleID, opts ...grp
 	return out, nil
 }
 
+func (c *puzzlerClient) GetStats(ctx context.Context, in *StatsQuery, opts ...grpc.CallOption) (*Stats, error) {
+	out := new(Stats)
+	err := grpc.Invoke(ctx, "/sudokuapi.Puzzler/GetStats", in, out, c.cc, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // Server API for Puzzler service
 
 type PuzzlerServer interface {
 	GetPuzzle(context.Context, *PuzzleID) (*Puzzle, error)
+	GetStats(context.Context, *StatsQuery) (*Stats, error)
 }
 
 func RegisterPuzzlerServer(s *grpc.Server, srv PuzzlerServer) {
@@ -117,6 +149,24 @@ func _Puzzler_GetPuzzle_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Puzzler_GetStats_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(StatsQuery)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PuzzlerServer).GetStats(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sudokuapi.Puzzler/GetStats",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PuzzlerServer).GetStats(ctx, req.(*StatsQuery))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _Puzzler_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "sudokuapi.Puzzler",
 	HandlerType: (*PuzzlerServer)(nil),
@@ -124,6 +174,10 @@ var _Puzzler_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPuzzle",
 			Handler:    _Puzzler_GetPuzzle_Handler,
+		},
+		{
+			MethodName: "GetStats",
+			Handler:    _Puzzler_GetStats_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
@@ -133,13 +187,17 @@ var _Puzzler_serviceDesc = grpc.ServiceDesc{
 func init() { proto.RegisterFile("sudokuapi.proto", fileDescriptor0) }
 
 var fileDescriptor0 = []byte{
-	// 128 bytes of a gzipped FileDescriptorProto
+	// 182 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x09, 0x6e, 0x88, 0x02, 0xff, 0xe2, 0xe2, 0x2f, 0x2e, 0x4d, 0xc9,
 	0xcf, 0x2e, 0x4d, 0x2c, 0xc8, 0xd4, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0xe2, 0x84, 0x0b, 0x28,
-	0xc9, 0x71, 0x71, 0x04, 0x94, 0x56, 0x55, 0xe5, 0xa4, 0x7a, 0xba, 0x08, 0x09, 0x71, 0xb1, 0x94,
-	0x96, 0x66, 0xa6, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0x06, 0x5c, 0x6c,
-	0x10, 0x79, 0x6c, 0xb2, 0x20, 0xb1, 0xe4, 0xd4, 0x9c, 0x1c, 0x09, 0x26, 0x05, 0x66, 0x0d, 0xde,
-	0x20, 0x30, 0xdb, 0xc8, 0x8e, 0x8b, 0x1d, 0xa2, 0xa3, 0x48, 0xc8, 0x98, 0x8b, 0xd3, 0x3d, 0xb5,
-	0x04, 0xaa, 0x5f, 0x58, 0x0f, 0xe1, 0x0c, 0x98, 0x95, 0x52, 0x82, 0x18, 0x82, 0x49, 0x6c, 0x60,
-	0x37, 0x1a, 0x03, 0x02, 0x00, 0x00, 0xff, 0xff, 0xbe, 0x3a, 0xcb, 0x05, 0xb6, 0x00, 0x00, 0x00,
+	0xf1, 0x70, 0x71, 0x05, 0x97, 0x24, 0x96, 0x14, 0x07, 0x96, 0xa6, 0x16, 0x55, 0x2a, 0xc9, 0x71,
+	0x71, 0x04, 0x94, 0x56, 0x55, 0xe5, 0xa4, 0x7a, 0xba, 0x08, 0x09, 0x71, 0xb1, 0x94, 0x96, 0x66,
+	0xa6, 0x48, 0x30, 0x2a, 0x30, 0x6a, 0x70, 0x06, 0x81, 0xd9, 0x4a, 0x06, 0x5c, 0x6c, 0x10, 0x79,
+	0x6c, 0xb2, 0x20, 0xb1, 0xe4, 0xd4, 0x9c, 0x1c, 0x09, 0x26, 0x05, 0x66, 0x0d, 0xde, 0x20, 0x30,
+	0x5b, 0x49, 0x96, 0x8b, 0x15, 0x6c, 0xbe, 0x90, 0x08, 0x17, 0x6b, 0x72, 0x7e, 0x69, 0x5e, 0x09,
+	0x58, 0x07, 0x4b, 0x10, 0x84, 0x63, 0x54, 0xcc, 0xc5, 0x0e, 0x31, 0xb0, 0x48, 0xc8, 0x98, 0x8b,
+	0xd3, 0x3d, 0xb5, 0x04, 0x6a, 0xbc, 0xb0, 0x1e, 0xc2, 0xcd, 0x30, 0x17, 0x49, 0x09, 0x62, 0x08,
+	0x0a, 0x19, 0x73, 0x71, 0xb8, 0xa7, 0x96, 0x40, 0x6c, 0x10, 0x45, 0x92, 0x46, 0xf8, 0x49, 0x4a,
+	0x00, 0x5d, 0x38, 0x89, 0x0d, 0x1c, 0x0a, 0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0x00, 0xbf,
+	0xdd, 0x06, 0x18, 0x01, 0x00, 0x00,
 }

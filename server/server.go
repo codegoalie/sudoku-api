@@ -39,6 +39,7 @@ type server struct{}
 
 type repo interface {
 	GetSudoku(string) ([]uint32, error)
+	GetCount() uint64
 }
 
 func (r staticRepo) GetSudoku(uuid string) ([]uint32, error) {
@@ -49,6 +50,10 @@ func (r staticRepo) GetSudoku(uuid string) ([]uint32, error) {
 	return []uint32{}, errors.New("Unknown puzzle UUID")
 }
 
+func (r staticRepo) GetCount() uint64 {
+	return uint64(len(r.db))
+}
+
 func (s server) GetPuzzle(ctx context.Context, params *pb.PuzzleID) (*pb.Puzzle, error) {
 	fmt.Println(params.Uuid)
 	grid, err := repoInstance.GetSudoku(params.Uuid)
@@ -57,6 +62,10 @@ func (s server) GetPuzzle(ctx context.Context, params *pb.PuzzleID) (*pb.Puzzle,
 	}
 
 	return &pb.Puzzle{Uuid: params.Uuid, Cell: grid}, nil
+}
+
+func (s server) GetStats(ctx context.Context, params *pb.StatsQuery) (*pb.Stats, error) {
+	return &pb.Stats{Count: repoInstance.GetCount()}, nil
 }
 
 func main() {

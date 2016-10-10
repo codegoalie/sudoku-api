@@ -4,7 +4,10 @@ package sudokuapi;
 
 service Puzzler {
   rpc GetPuzzle (PuzzleID) returns (Puzzle);
+  rpc GetStats (StatsQuery) returns (Stats);
 }
+
+message StatsQuery {}
 
 message PuzzleID {
   string uuid = 1;
@@ -13,4 +16,8 @@ message PuzzleID {
 message Puzzle {
   string uuid = 1;
   repeated uint32 cell = 2;
+}
+
+message Stats {
+  uint64 count = 1;
 }

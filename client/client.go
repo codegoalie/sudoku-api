@@ -27,4 +27,10 @@ func main() {
 	}
 
 	log.Printf("Here's the pzzle: %v", resp)
+
+	count, err := client.GetStats(context.Background(), &pb.StatsQuery{})
+	if err != nil {
+		log.Fatal(err)
+	}
+	log.Printf("Here's the count: %d", count.Count)
 }
