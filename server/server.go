@@ -68,6 +68,14 @@ func (s server) GetStats(ctx context.Context, params *pb.StatsQuery) (*pb.Stats,
 	return &pb.Stats{Count: repoInstance.GetCount()}, nil
 }
 
+func (s server) CreatePuzzle(ctx context.Context, params *pb.Puzzle) (*pb.Puzzle, error) {
+	if len(repoInstance.db[params.Uuid]) > 0 {
+		return nil, errors.New("Puzzle already exists")
+	}
+	repoInstance.db[params.Uuid] = params.Cell
+	return params, nil
+}
+
 func main() {
 	flag.Parse()
 	lis, err := net.Listen("tcp", fmt.Sprintf(":%d", *port))

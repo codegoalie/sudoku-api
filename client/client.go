@@ -5,6 +5,7 @@ import (
 	"log"
 
 	pb "github.com/codegoalie/sudoku-api/sudokuapi"
+	uuid "github.com/satori/go.uuid"
 	"google.golang.org/grpc"
 )
 
@@ -26,11 +27,38 @@ func main() {
 		log.Fatalf("Failed to get puzzle: %v", err)
 	}
 
-	log.Printf("Here's the pzzle: %v", resp)
+	log.Printf("Here's the pzzle: %v\n", resp)
 
 	count, err := client.GetStats(context.Background(), &pb.StatsQuery{})
 	if err != nil {
 		log.Fatal(err)
 	}
-	log.Printf("Here's the count: %d", count.Count)
+	log.Printf("Here's the count: %d\n", count.Count)
+
+	puzzle := pb.Puzzle{Uuid: uuid.NewV4().String(), Cell: []uint32{
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+		1, 2, 3, 4, 5, 6, 7, 8, 9,
+	}}
+
+	newPuzzle, err := client.CreatePuzzle(context.Background(), &puzzle)
+	if err != nil {
+		log.Fatalf("Count not create puzzle: %v", err)
+	}
+	log.Printf("Added: %v\n", newPuzzle.Uuid)
+
+	log.Printf("Should fail:\n")
+	newPuzzle, err = client.CreatePuzzle(context.Background(), &puzzle)
+	if err != nil {
+		log.Fatalf("Count not create puzzle: %v", err)
+	}
+	log.Printf("Added: %v", newPuzzle.Uuid)
+
 }

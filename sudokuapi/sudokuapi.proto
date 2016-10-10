@@ -5,6 +5,7 @@ package sudokuapi;
 service Puzzler {
   rpc GetPuzzle (PuzzleID) returns (Puzzle);
   rpc GetStats (StatsQuery) returns (Stats);
+  rpc CreatePuzzle (Puzzle) returns (Puzzle);
 }
 
 message StatsQuery {}
