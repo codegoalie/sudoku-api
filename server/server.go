@@ -19,13 +19,13 @@ var (
 type server struct{}
 
 type repo interface {
-	GetSudoku(string) ([]uint32, error)
-	GetCount() uint64
-	CreatePuzzle(uuid string, grid []uint32) error
+	GetSudoku(ctx context.Context, uuid string) ([]uint32, error)
+	GetCount(ctx context.Context) uint64
+	CreatePuzzle(ctx context.Context, uuid string, grid []uint32) error
 }
 
 func (s server) GetPuzzle(ctx context.Context, params *pb.PuzzleID) (*pb.Puzzle, error) {
-	grid, err := repoInstance.GetSudoku(params.Uuid)
+	grid, err := repoInstance.GetSudoku(ctx, params.Uuid)
 	if err != nil {
 		return nil, err
 	}
@@ -34,11 +34,11 @@ func (s server) GetPuzzle(ctx context.Context, params *pb.PuzzleID) (*pb.Puzzle,
 }
 
 func (s server) GetStats(ctx context.Context, params *pb.StatsQuery) (*pb.Stats, error) {
-	return &pb.Stats{Count: repoInstance.GetCount()}, nil
+	return &pb.Stats{Count: repoInstance.GetCount(ctx)}, nil
 }
 
 func (s server) CreatePuzzle(ctx context.Context, params *pb.Puzzle) (*pb.Puzzle, error) {
-	err := repoInstance.CreatePuzzle(params.Uuid, params.Cell)
+	err := repoInstance.CreatePuzzle(ctx, params.Uuid, params.Cell)
 	return params, err
 }
 

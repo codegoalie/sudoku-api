@@ -35,7 +35,7 @@ func main() {
 	}
 	log.Printf("Here's the count: %d\n", count.Count)
 
-	puzzle := pb.Puzzle{Uuid: uuid.NewV4().String(), Cell: []uint32{
+	puzzle := pb.Puzzle{Uuid: uuid.NewV4().String(), Start: []int32{
 		1, 2, 3, 4, 5, 6, 7, 8, 9,
 		1, 2, 3, 4, 5, 6, 7, 8, 9,
 		1, 2, 3, 4, 5, 6, 7, 8, 9,

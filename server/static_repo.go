@@ -1,6 +1,9 @@
 package main
 
-import "errors"
+import (
+	"context"
+	"errors"
+)
 
 var (
 	repoInstance = staticRepo{db: map[string][]uint32{
@@ -23,7 +26,7 @@ type staticRepo struct {
 	db map[string][]uint32
 }
 
-func (r staticRepo) GetSudoku(uuid string) ([]uint32, error) {
+func (r staticRepo) GetSudoku(_ context.Context, uuid string) ([]uint32, error) {
 	if grid, ok := r.db[uuid]; ok {
 		return grid, nil
 	}
@@ -31,11 +34,11 @@ func (r staticRepo) GetSudoku(uuid string) ([]uint32, error) {
 	return []uint32{}, errors.New("Unknown puzzle UUID")
 }
 
-func (r staticRepo) GetCount() uint64 {
+func (r staticRepo) GetCount(_ context.Context) uint64 {
 	return uint64(len(r.db))
 }
 
-func (r staticRepo) CreatePuzzle(uuid string, grid []uint32) error {
+func (r staticRepo) CreatePuzzle(_ context.Context, uuid string, grid []uint32) error {
 	if len(r.db[uuid]) > 0 {
 		return errors.New("Puzzle already exists")
 	}

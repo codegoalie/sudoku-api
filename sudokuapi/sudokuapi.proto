@@ -16,7 +16,8 @@ message PuzzleID {
 
 message Puzzle {
   string uuid = 1;
-  repeated uint32 cell = 2;
+  repeated int32 start = 2;
+  repeated int32 solution = 3;
 }
 
 message Stats {
